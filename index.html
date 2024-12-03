@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Room</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 20px; }
+        #chat { margin: 20px auto; max-width: 600px; padding: 10px; border: 1px solid #ddd; background: #fff; }
+        #messages { list-style-type: none; padding: 0; }
+        #messages li { padding: 5px; border-bottom: 1px solid #eee; }
+        input { width: calc(100% - 60px); padding: 10px; border: 1px solid #ddd; }
+        button { padding: 10px; background: #007bff; color: green; border: none; cursor: pointer; }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <div id="chat">
+        <ul id="messages"></ul>
+        <input id="messageInput" autocomplete="off" placeholder="Type your message..." />
+        <button onclick="sendMessage()">Send</button>
+    </div>
+    <script>
+        const socket = io();
+
+        // Mottar meldinger fra serveren
+        socket.on('message', function(msg) {
+            const messages = document.getElementById('messages');
+            const li = document.createElement('li');
+            li.textContent = msg;
+            messages.appendChild(li);
+            window.scrollTo(0, document.body.scrollHeight);
+        });
+
+        // Sender meldinger til serveren
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value;
+            socket.send(message);  // Sender til serveren
+            input.value = '';
+        }
+    </script>
+</body>
+</html>
